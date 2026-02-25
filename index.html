@@ -63,7 +63,6 @@
             margin-bottom: 30px; 
         }
 
-        /* Zona de interacciÛn */
         .upload-zone {
             width: 100%;
             aspect-ratio: 1;
@@ -109,7 +108,6 @@
             font-weight: 200; 
         }
 
-        /* BotÛn */
         .btn-upload {
             width: 100%;
             margin-top: 25px;
@@ -134,7 +132,6 @@
             cursor: not-allowed;
         }
 
-        /* Pantalla de Carga */
         .loading-container {
             margin-top: 30px;
             display: flex;
@@ -212,12 +209,11 @@
     <div class="main-wrapper">
         <div class="glass-card">
             <header class="card-header">
-                <div class="brand-icon">??</div>
+                <div class="brand-icon">üì∏</div>
                 <h1>Captura el Momento</h1>
                 <p>Sube tus fotos favoritas del evento</p>
             </header>
 
-            <!-- Zona de Carga / Vista Previa -->
             <div class="upload-zone" id="uploadZone">
                 <div class="placeholder-content" id="placeholderContent">
                     <div class="plus-icon">+</div>
@@ -228,10 +224,8 @@
             
             <input type="file" id="fileInput" accept="image/*" capture="environment" style="display: none;">
 
-            <!-- BotÛn de AcciÛn -->
-            <button class="btn-upload" id="uploadBtn" style="display: none;">ENVIAR FOTOGRAFÕA</button>
+            <button class="btn-upload" id="uploadBtn" style="display: none;">ENVIAR FOTOGRAF√çA</button>
 
-            <!-- Pantalla de Carga Premium -->
             <div class="loading-container" id="loadingContainer" style="display: none;">
                 <div class="spinner"></div>
                 <div class="loading-info">
@@ -242,23 +236,19 @@
                 </div>
             </div>
 
-            <!-- Mensaje de Estado (…xito/Error) -->
             <p class="status-feedback" id="statusMessage"></p>
-            
-            <!-- Evento ID (oculto, solo para referencia) -->
             <div class="evento-id" id="eventoId"></div>
         </div>
     </div>
 
     <script>
-        // ConfiguraciÛn
+        // Configuraci√≥n
         const WEBAPP_URL = "https://script.google.com/a/macros/claheeventos.com/s/AKfycbwtMwDHjhBbomOrbNhM5Bv9FcbHLI0ElcLUbvLw4T6467EzrLa3c5T9Hjt9hYgiPoo_/exec";
         
-        // Obtener eventoId de la URL
-        const pathParts = window.location.pathname.split('/');
-        const eventoId = pathParts[pathParts.length - 1] || 'evento-default';
+        // Obtener eventoId de los par√°metros de la URL (?evento=EVT_b5077e99)
+        const urlParams = new URLSearchParams(window.location.search);
+        const eventoId = urlParams.get('evento') || 'evento-default';
         
-        // Elementos del DOM
         const uploadZone = document.getElementById('uploadZone');
         const fileInput = document.getElementById('fileInput');
         const preview = document.getElementById('preview');
@@ -269,14 +259,11 @@
         const statusMessage = document.getElementById('statusMessage');
         const eventoIdElement = document.getElementById('eventoId');
 
-        // Estado
         let selectedFile = null;
         let isLoading = false;
 
-        // Mostrar eventoId (opcional)
         eventoIdElement.textContent = `Evento: ${eventoId}`;
 
-        // FunciÛn para convertir archivo a Base64
         function toBase64(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -286,34 +273,26 @@
             });
         }
 
-        // Manejar clic en zona de carga
         uploadZone.addEventListener('click', () => {
             if (!isLoading) {
                 fileInput.click();
             }
         });
 
-        // Manejar selecciÛn de archivo
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files?.[0] || null;
             selectedFile = file;
             
             if (file) {
-                // Mostrar preview
                 const objectUrl = URL.createObjectURL(file);
                 preview.src = objectUrl;
                 preview.style.display = 'block';
                 placeholderContent.style.display = 'none';
                 uploadZone.classList.add('has-preview');
-                
-                // Mostrar botÛn de subir
                 uploadBtn.style.display = 'block';
                 statusMessage.textContent = '';
-                
-                // Limpiar URL object cuando ya no se necesite
                 preview.onload = () => URL.revokeObjectURL(objectUrl);
             } else {
-                // Resetear vista
                 preview.style.display = 'none';
                 placeholderContent.style.display = 'flex';
                 uploadZone.classList.remove('has-preview');
@@ -321,7 +300,6 @@
             }
         });
 
-        // Manejar subida
         uploadBtn.addEventListener('click', async () => {
             if (!selectedFile || !eventoId || isLoading) return;
 
@@ -337,7 +315,6 @@
                 
                 loadingMessage.textContent = 'SUBIENDO ...';
                 
-                // Enviar a Google Apps Script
                 await fetch(WEBAPP_URL, {
                     method: "POST",
                     mode: "no-cors",
@@ -350,24 +327,21 @@
                     }),
                 });
 
-                // …xito
-                statusMessage.textContent = '? °SUBIDA COMPLETADA!';
+                statusMessage.textContent = '‚ú® ¬°SUBIDA COMPLETADA!';
                 
-                // Resetear formulario
                 selectedFile = null;
                 fileInput.value = '';
                 preview.style.display = 'none';
                 placeholderContent.style.display = 'flex';
                 uploadZone.classList.remove('has-preview');
                 
-                // Limpiar mensaje despuÈs de 3 segundos
                 setTimeout(() => {
                     statusMessage.textContent = '';
                 }, 3000);
 
             } catch (error) {
                 console.error('Error:', error);
-                statusMessage.textContent = '? ERROR DE CONEXI”N';
+                statusMessage.textContent = '‚ùå ERROR DE CONEXI√ìN';
             } finally {
                 isLoading = false;
                 loadingContainer.style.display = 'none';
@@ -376,7 +350,6 @@
             }
         });
 
-        // Prevenir comportamiento por defecto del drag & drop
         document.addEventListener('dragover', (e) => e.preventDefault());
         document.addEventListener('drop', (e) => e.preventDefault());
     </script>
